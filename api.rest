@@ -1,0 +1,30 @@
+###
+POST http://localhost:3000/item HTTP/1.1
+content-type: application/json
+
+{
+    "name": "hello",
+    "colorHex": "#333",
+    "price": 123,
+    "proveedor": "Alejandro"
+}
+
+###
+PUT http://localhost:3000/item HTTP/1.1
+content-type: application/json
+
+{
+    "id": "61a9a6393316c15d7d49c22d",
+    "name": "XD"
+}
+
+###
+DELETE http://localhost:3000/item HTTP/1.1
+content-type: application/json
+
+{
+    "id": "61a9a6393316c15d7d49c22d"
+}
+
+###
+GET http://localhost:3000/ HTTP/1.1
