@@ -1,4 +1,10 @@
 ###
+GET http://localhost:3000/ HTTP/1.1
+
+###
+GET http://localhost:3000/item?name=hello HTTP/1.1
+
+###
 POST http://localhost:3000/item HTTP/1.1
 content-type: application/json
 
@@ -15,7 +21,7 @@ content-type: application/json
 
 {
     "id": "61a9a6393316c15d7d49c22d",
-    "name": "XD"
+    "name": "hola"
 }
 
 ###
@@ -26,5 +32,52 @@ content-type: application/json
     "id": "61a9a6393316c15d7d49c22d"
 }
 
+### 
+GET http://localhost:3000/menu?name=hello&proveedor=Alejandro HTTP/1.1
+
 ###
-GET http://localhost:3000/ HTTP/1.1
+POST http://localhost:3000/menu HTTP/1.1
+content-type: application/json
+
+[
+    {
+        "name": "hello",
+        "colorHex": "#333",
+        "price": 123,
+        "proveedor": "Alejandro"
+    }, {
+        "name": "hello",
+        "colorHex": "#333",
+        "price": 123,
+        "proveedor": "Alejandro"
+    }, {
+        "name": "hello",
+        "colorHex": "#333",
+        "price": 123,
+        "proveedor": "Alejandro"
+    }
+]
+
+###
+PUT http://localhost:3000/menu HTTP/1.1
+content-type: application/json
+
+{
+    "id": "61ae60dd22381902f3b98b01",
+    "items": [
+        {
+            "name": "hello",
+            "colorHex": "#333",
+            "price": 123,
+            "proveedor": "AlejandroXD"
+        }
+    ]
+}
+
+###
+DELETE http://localhost:3000/menu HTTP/1.1
+content-type: application/json
+
+{
+    "id": "61ae60dd22381902f3b98b01"
+}

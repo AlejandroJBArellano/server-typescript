@@ -1,9 +1,31 @@
 import {Schema, model, Document } from "mongoose";
-import ItemSchema, { Item } from "./Item";
-import UserSchema, { User } from "./User";
+import { Item } from "./Item";
+import { User } from "./User";
 
-const OrderSchema = new Schema({
-    items: [ItemSchema],
+const ItemMenuSchema = new Schema({
+    name: String,
+    colorHex: String,
+    price: Number,
+    proveedor: String
+}),
+
+MenuSchema = new Schema({
+    items: [ItemMenuSchema]
+}),
+
+ProfileSchema = new Schema({
+    profileName: String,
+    menu: [MenuSchema]
+}),
+
+UserSchema = new Schema({
+    pin: Number,
+    completeName: String,
+    perfil: ProfileSchema
+}),
+
+OrderSchema = new Schema({
+    items: [ItemMenuSchema],
     paymentType: String,
     user: UserSchema,
     Terminal: String
