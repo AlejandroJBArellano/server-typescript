@@ -19,35 +19,34 @@ router.get("/", (req, res) => {
     res.json({ message: "hello"})
 });
 
-router.get("/item", async ({query}, res) => {
-    const items = await Item.find(query);
-    res.json(items)
-});
-
-router.post("/item", async (req, res) => {
-    try {        
-        const newItem = new Item(req.body);
-        await newItem.save();
-        res.json({
-            newItem, message: messages.post(newItem._id)
-        })
-    } catch (error) {
-        res.json(error)
-    }
-});
-
-router.put("/item", async ({body}, res) => {
-    const itemToUpdate = await Item.findByIdAndUpdate(body.id, body);
-    res.json({
-        itemToUpdate,
-        message: messages.put(itemToUpdate?._id)
+router.route("/item")
+    .get(async ({query}, res) => {
+        const items = await Item.find(query);
+        res.json(items)
     })
-});
+    .post(async (req, res) => {
+        try {        
+            const newItem = new Item(req.body);
+            await newItem.save();
+            res.json({
+                newItem, message: messages.post(newItem._id)
+            })
+        } catch (error) {
+            res.json(error)
+        }
+    })
+    .put(async ({body}, res) => {
+        const itemToUpdate = await Item.findByIdAndUpdate(body.id, body);
+        res.json({
+            itemToUpdate,
+            message: messages.put(itemToUpdate?._id)
+        })
+    })
+    .delete(async ({query}, res) => {
+        await Item.findByIdAndDelete(query.id);
+        res.json({message: messages.delete(query.id as string)})
+    })
 
-router.delete("/item", async ({body}, res) => {
-    await Item.findByIdAndDelete(body.id);
-    res.json({message: messages.delete(body.id)})
-});
 
 router.get("/menu", async ({query}, res) => {
     const menus = await Menu.find({
@@ -64,6 +63,11 @@ router.post("/menu", async({body}, res) => {
     const newMenu = new Menu({
         items: body
     })
+    for(const item of body) {
+        const newItem = new Item(item);
+        await newItem.save();
+        console.log(newItem)
+    }
     await newMenu.save();
     res.json({
         message: messages.post(newMenu._id),
@@ -71,8 +75,8 @@ router.post("/menu", async({body}, res) => {
     })
 });
 
-router.put("/menu", async ({body}, res) => {
-    const menuToUpdate = await Menu.findById(body.id);
+router.put("/menu", async ({query, body}, res) => {
+    const menuToUpdate = await Menu.findById(query.id);
     if(menuToUpdate){
         menuToUpdate.items = body.items
         await menuToUpdate.save();
@@ -91,33 +95,32 @@ router.delete("/menu", async ({body}, res) => {
     res.json({message: messages.delete(body.id), menus})
 })
 
-router.get("/profile", async ({query}, res) => {
-    const profiles = await Profile.find(query);
-    res.json(profiles)
-});
-
-router.post("/profile", async ({body}, res) => {
-    const newProfile = new Profile(body);
-    await newProfile.save();
-    res.json({
-        message: messages.post(newProfile._id),
-        newProfile
-    });
-})
-
-router.put("/profile", async ({body}, res) => {
-    const profileToUpdate = await Profile.findByIdAndUpdate(body.id, body);
-    res.json({message: messages.put(profileToUpdate?._id), profileToUpdate})
-})
-
-router.delete("/profile", async ({body}, res) => {
-    await Profile.findByIdAndDelete(body.id);
-    const profiles = await Profile.find()
-    res.json({
-        message: messages.delete(body.id), 
-        profiles
+router.route("/profile")
+    .get(async ({query}, res) => {
+        const profiles = await Profile.find(query);
+        res.json(profiles)
     })
-})
+    .post(async ({body}, res) => {
+        const newProfile = new Profile(body);
+        await newProfile.save();
+        res.json({
+            message: messages.post(newProfile._id),
+            newProfile
+        });
+    })
+    .put(async ({query, body}, res) => {
+        const profileToUpdate = await Profile.findByIdAndUpdate(query, body);
+        res.json({message: messages.put(profileToUpdate?._id), profileToUpdate})
+    })
+    .delete(async ({body}, res) => {
+        await Profile.findByIdAndDelete(body.id);
+        const profiles = await Profile.find();
+        res.json({
+            message: messages.delete(body.id), 
+            profiles
+        })
+    })
+
 
 router.get("/user", async ({query}, res) => {
     const users = await User.find(query);
@@ -138,16 +141,16 @@ router.post("/user", async ({body}, res) => {
     })
 })
 
-router.put("/user", async ({body}, res) => {
-    const userToUpdate = await User.findByIdAndUpdate(body.id, body);
+router.put("/user", async ({query,body}, res) => {
+    const userToUpdate = await User.findByIdAndUpdate(query.id, body);
     res.json({
         message: messages.put(body.id),
         userToUpdate
     })
 })
 
-router.delete("/user", async ({body}, res) => {
-    await User.findByIdAndDelete(body.id)
+router.delete("/user", async ({query, body}, res) => {
+    await User.findByIdAndDelete(query.id);
     const users = await User.find();
     res.json({
         message: messages.delete(body.id),

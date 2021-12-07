@@ -1,26 +1,15 @@
 import {Schema, model, Document} from "mongoose";
 import { Profile } from "./Profile";
 
-const ItemMenuSchema = new Schema({
-    name: String,
-    colorHex: String,
-    price: Number,
-    proveedor: String
-}),
-
-MenuSchema = new Schema({
-    items: [ItemMenuSchema]
-});
-
-const ProfileSchema = new Schema({
-    profileName: String,
-    menu: [MenuSchema]
-}),
-
-UserSchema = new Schema({
+const UserSchema = new Schema({
     pin: Number,
     completeName: String,
-    perfil: ProfileSchema
+    perfil: {
+        type: Schema.Types.ObjectId,
+        ref: "Profile"
+    }
+}, {
+    versionKey: false
 });
 
 export interface User extends Document{

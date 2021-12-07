@@ -44,17 +44,17 @@ content-type: application/json
         "name": "hello",
         "colorHex": "#333",
         "price": 123,
-        "proveedor": "Alejandro"
+        "proveedor": "From MEnu"
     }, {
         "name": "hello",
         "colorHex": "#333",
         "price": 123,
-        "proveedor": "Alejandro"
+        "proveedor": "from Menu"
     }, {
         "name": "hello",
         "colorHex": "#333",
         "price": 123,
-        "proveedor": "Alejandro"
+        "proveedor": "from Menu"
     }
 ]
 

@@ -2,33 +2,16 @@ import {Schema, model, Document } from "mongoose";
 import { Item } from "./Item";
 import { User } from "./User";
 
-const ItemMenuSchema = new Schema({
-    name: String,
-    colorHex: String,
-    price: Number,
-    proveedor: String
-}),
-
-MenuSchema = new Schema({
-    items: [ItemMenuSchema]
-}),
-
-ProfileSchema = new Schema({
-    profileName: String,
-    menu: [MenuSchema]
-}),
-
-UserSchema = new Schema({
-    pin: Number,
-    completeName: String,
-    perfil: ProfileSchema
-}),
-
-OrderSchema = new Schema({
-    items: [ItemMenuSchema],
+const OrderSchema = new Schema({
+    items: [{
+        type: Schema.Types.ObjectId, 
+        ref: "Item"
+    }],
     paymentType: String,
-    user: UserSchema,
+    userPin: Number,
     Terminal: String
+}, {
+    versionKey: false
 });
 
 export interface Order extends Document {

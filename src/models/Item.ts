@@ -5,6 +5,8 @@ const ItemSchema = new Schema({
     colorHex: String,
     price: Number,
     proveedor: String
+}, {
+    versionKey: false
 })
 
 export interface Item extends Document {

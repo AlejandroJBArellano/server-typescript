@@ -1,20 +1,14 @@
 import {Schema, model, Document} from "mongoose";
 import { Menu } from "./Menu";
 
-const ItemMenuSchema = new Schema({
-    name: String,
-    colorHex: String,
-    price: Number,
-    proveedor: String
-}),
-
-MenuSchema = new Schema({
-    items: [ItemMenuSchema]
-});
-
 const ProfileSchema = new Schema({
     profileName: String,
-    menu: [MenuSchema]
+    menu: {
+        type: Schema.Types.ObjectId,
+        ref: "Menu"
+    }
+}, {
+    versionKey: false
 });
 
 export interface Profile extends Document {

@@ -6,10 +6,14 @@ const ItemMenuSchema = new Schema({
     colorHex: String,
     price: Number,
     proveedor: String
+}, {
+    _id: false
 }),
 
 MenuSchema = new Schema({
     items: [ItemMenuSchema]
+}, {
+    versionKey: false
 });
 
 export interface Menu extends Document {

@@ -12,6 +12,8 @@ const CorteDeCajaSchema = new Schema({
     SaldoFinalEfectivo: Number,
     user: UserSchema,
     Terminal: String
+}, {
+    versionKey: false
 });
 
 export interface CorteDecaja extends Document {
