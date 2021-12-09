@@ -3,7 +3,7 @@ import { Menu } from "./Menu";
 
 const ProfileSchema = new Schema({
     profileName: String,
-    menu: {
+    menuId: {
         type: Schema.Types.ObjectId,
         ref: "Menu"
     }
@@ -13,7 +13,9 @@ const ProfileSchema = new Schema({
 
 export interface Profile extends Document {
     profileName: String,
-    menu: Menu
+    menu: {
+        _id: string;
+    }
 }
 
 export default model<Profile>("Profile", ProfileSchema)

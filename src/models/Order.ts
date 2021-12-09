@@ -15,9 +15,9 @@ const OrderSchema = new Schema({
 });
 
 export interface Order extends Document {
-    items: Item[];
+    items: {_id: string}[];
     paymentType: String;
-    user: User;
+    userPin: Number;
     Terminal: String;
 }
 

@@ -99,22 +99,30 @@ router.route("/profile")
         res.json(profiles)
     })
     .post(async ({body}, res) => {
+        const menu = await Menu.findById(body.menuId);
+        if(!menu || body.profileName.length < 0){
+            res.json({
+                messages: messages.foundNothing
+            })
+            return;
+        }
         const newProfile = new Profile(body);
         await newProfile.save();
         res.json({
             message: messages.post(newProfile._id),
-            newProfile
+            newProfile,
+            menu
         });
     })
     .put(async ({query, body}, res) => {
         const profileToUpdate = await Profile.findByIdAndUpdate(query, body);
         res.json({message: messages.put(profileToUpdate?._id), profileToUpdate})
     })
-    .delete(async ({body}, res) => {
-        await Profile.findByIdAndDelete(body.id);
+    .delete(async ({query}, res) => {
+        await Profile.findByIdAndDelete(query._id);
         const profiles = await Profile.find();
         res.json({
-            message: messages.delete(body.id), 
+            message: messages.delete(query._id as string), 
             profiles
         })
     });

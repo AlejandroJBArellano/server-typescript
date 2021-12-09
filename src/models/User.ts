@@ -4,10 +4,7 @@ import { Profile } from "./Profile";
 const UserSchema = new Schema({
     pin: Number,
     completeName: String,
-    perfil: {
-        type: Schema.Types.ObjectId,
-        ref: "Profile"
-    }
+    profileName: String,
 }, {
     versionKey: false
 });
@@ -15,7 +12,7 @@ const UserSchema = new Schema({
 export interface User extends Document{
     pin: number;
     completeName: string;
-    perfil: Profile;
+    profileName: string;
 }
 
 export default model("User", UserSchema)

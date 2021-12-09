@@ -81,3 +81,50 @@ content-type: application/json
 {
     "id": "61ae60dd22381902f3b98b01"
 }
+
+### 
+GET http://localhost:3000/profile?profileName=hola HTTP/1.1
+
+
+###
+POST http://localhost:3000/profile HTTP/1.1
+content-type: application/json
+
+{
+    "menuId": "61ae48f27c92fc15adaec41b",
+    "profileName": "hola"
+}
+
+###
+PUT http://localhost:3000/profile?_id=61b274d6a36a1cceb6615a12 HTTP/1.1
+content-type: application/json
+
+{
+    "profileName": "hola",
+    "menuId": "61ae48f27c92fc15adaec41b"
+}
+
+###
+DELETE http://localhost:3000/profile?_id=61b274d6a36a1cceb6615a12 HTTP/1.1
+
+###
+GET http://localhost:3000/user?profileName=HelloWorld HTTP/1.1
+###
+POST http://localhost:3000/user HTTP/1.1
+content-type: application/json
+
+{
+    "pin": 2345,
+    "completeName": "Alejandro Jesús Bautista Arellano",
+    "profileName": "HelloWorld"
+}
+###
+POST http://localhost:3000/ HTTP/1.1
+content-type: application/json
+
+{}
+###
+POST http://localhost:3000/ HTTP/1.1
+content-type: application/json
+
+{}
