@@ -33,7 +33,7 @@ content-type: application/json
 }
 
 ### 
-GET http://localhost:3000/menu?name=hello&proveedor=Alejandro HTTP/1.1
+GET http://localhost:3000/menu?name=hello& HTTP/1.1
 
 ###
 POST http://localhost:3000/menu HTTP/1.1
@@ -83,7 +83,7 @@ content-type: application/json
 }
 
 ### 
-GET http://localhost:3000/profile?profileName=hola HTTP/1.1
+GET http://localhost:3000/profile?profileName=HelloWorld HTTP/1.1
 
 
 ###
@@ -118,13 +118,36 @@ content-type: application/json
     "completeName": "Alejandro Jesús Bautista Arellano",
     "profileName": "HelloWorld"
 }
+
+### 
+GET http://localhost:3000/user-pin?pin=2345 HTTP/1.1
+
+###
+GET http://localhost:3000/order HTTP/1.1
+
 ###
 POST http://localhost:3000/ HTTP/1.1
 content-type: application/json
 
 {}
+
 ###
-POST http://localhost:3000/ HTTP/1.1
+GET http://localhost:3000/calculo-de-corte HTTP/1.1
+
+###
+POST http://localhost:3000/corte-de-caja HTTP/1.1
 content-type: application/json
 
-{}
+{
+    "saldo": 480,
+    "retiroOAbono": 0,
+    "user": {
+        "pin": 2345,
+        "completeName": "Alejandro",
+        "profileName": "hola"
+    },
+    "terminal": "177.242.221.229"
+}
+
+###
+GET http://localhost:3000/menu?_id=621cf935db6f383fbf0ae10c 

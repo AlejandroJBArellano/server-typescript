@@ -13,9 +13,7 @@ const ProfileSchema = new Schema({
 
 export interface Profile extends Document {
     profileName: String,
-    menu: {
-        _id: string;
-    }
+    menuId: string;
 }
 
 export default model<Profile>("Profile", ProfileSchema)

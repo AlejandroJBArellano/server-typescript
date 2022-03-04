@@ -1,22 +1,32 @@
 import {Schema, model, Document } from "mongoose";
-import { Item } from "./Item";
-import { User } from "./User";
 
 const OrderSchema = new Schema({
     items: [{
-        type: Schema.Types.ObjectId, 
-        ref: "Item"
+        name: String,
+        colorHex: String,
+        price: Number,
+        proveedor: String
     }],
-    paymentType: String,
+    paymentType: {
+        type: String,
+        enum: ['Efectivo', 'Tarjeta'],
+        default: 'Efectivo'
+    },
     userPin: Number,
-    Terminal: String
+    terminal: String
 }, {
-    versionKey: false
+    versionKey: false,
+    timestamps: true
 });
 
 export interface Order extends Document {
-    items: {_id: string}[];
-    paymentType: String;
+    items: {    
+        name: string;
+        colorHex: string;
+        price: number;
+        proveedor: string;
+    }[];
+    paymentType: string;
     userPin: Number;
     Terminal: String;
 }

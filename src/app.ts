@@ -1,4 +1,5 @@
 import { Router } from "express";
+import CorteDeCaja from "./models/CorteDeCaja";
 import Item from "./models/Item";
 import Menu from "./models/Menu";
 import Order from "./models/Order";
@@ -36,7 +37,7 @@ router.route("/item")
         }
     })
     .put(async ({body}, res) => {
-        const itemToUpdate = await Item.findByIdAndUpdate(body.id, body);
+        const itemToUpdate = await Item.findByIdAndUpdate(body._id, body);
         res.json({
             itemToUpdate,
             message: messages.put(itemToUpdate?._id)
@@ -49,6 +50,11 @@ router.route("/item")
 
 router.route("/menu")
     .get(async ({query}, res) => {
+        if(query._id){
+            const menu = await Menu.findById(query._id)
+            res.json(menu);
+            return;
+        }
         const menus = await Menu.find({
             items: {
                 $elemMatch: {
@@ -62,10 +68,16 @@ router.route("/menu")
         const newMenu = new Menu({
             items: body
         })
+
+        // ! Why?
         for(const item of body) {
-            const newItem = new Item(item);
-            await newItem.save();
-            console.log(newItem)
+            const itemTOFind = await Item.findById(item._id);
+            if(!itemTOFind){
+                const newItem = new Item(item);
+                await newItem.save();
+                console.log(newItem);
+                return;
+            }
         }
         await newMenu.save();
         res.json({
@@ -96,7 +108,16 @@ router.route("/menu")
 router.route("/profile")
     .get(async ({query}, res) => {
         const profiles = await Profile.find(query);
-        res.json(profiles)
+        const profilesResponse = []
+        for (const profile of profiles) {
+            const menu = await Menu.findById(profile.menuId);
+            profilesResponse.push({
+                _id: profile._id,
+                profileName: profile.profileName,
+                menu
+            })
+        }
+        res.json(profilesResponse)
     })
     .post(async ({body}, res) => {
         const menu = await Menu.findById(body.menuId);
@@ -115,7 +136,7 @@ router.route("/profile")
         });
     })
     .put(async ({query, body}, res) => {
-        const profileToUpdate = await Profile.findByIdAndUpdate(query, body);
+        const profileToUpdate = await Profile.findByIdAndUpdate(query._id, body);
         res.json({message: messages.put(profileToUpdate?._id), profileToUpdate})
     })
     .delete(async ({query}, res) => {
@@ -148,23 +169,31 @@ router.route("/user")
             userToUpdate
         })
     })
-    .delete(async ({query, body}, res) => {
+    .delete(async ({query}, res) => {
         await User.findByIdAndDelete(query.id);
-        const users = await User.find();
         res.json({
-            message: messages.delete(body.id),
-            users
+            message: messages.delete(query.id as string),
         })
     });
 
 
 router.get("/user-pin", async ({query}, res) => {
+    // TODO return all of the embeded object
     const user = await User.findOne(query);
-    res.json(user);
+    const profile = await Profile.findOne({profileName: user.profileName})
+    const menu = await Menu.findById(profile?.menuId)
+    const userResponse = {
+        ...user._doc,
+        profile,
+        menu
+    }
+    delete userResponse.profile.menuId
+    delete userResponse.profileName
+    res.json(userResponse);
 })
 
 router.route("/order")
-    .get(async ({query}, res)=> {
+    .get(async ({query}, res) => {
         const orders = await Order.find(query);
         res.json(orders)
     })
@@ -183,14 +212,71 @@ router.route("/order")
             message: messages.put(query.id as string),
             orderToUpdate
         })
-    })
-    .delete(async ({query}, res) => {
-        await Order.findByIdAndDelete(query.id)
-        const orders = await Order.find()
-        res.json({
-            message: messages.delete(query.id as string),
-            orders
-        })
     });
-    
+
+async function calculoDeCorte(terminal: string) {
+    let ultimoCorteDeCaja = await CorteDeCaja.findOne({terminal}, {}, {sort: {"createdAt": -1}});
+    let fechaUltima = new Date(ultimoCorteDeCaja ? ultimoCorteDeCaja.createdAt as string : 0)
+    console.log('fechaUltima',fechaUltima)
+    const VentasToQuery = await Order.find({
+        paymentType: "Efectivo",
+        terminal,
+        createdAt: {
+            $gte: fechaUltima,
+            $lte: new Date()
+        }
+    })
+    console.log('VentasToQuery', VentasToQuery)
+    let ventasEfectivo = 0
+    for (const order of VentasToQuery) {
+        let totalToPay = 0
+        for (const item of order.items) {
+            totalToPay += item.price
+        }
+        ventasEfectivo += totalToPay
+    }
+    return {
+        message: `El efectivo esperado es ${ultimoCorteDeCaja?.saldoRealEfectivo as number + ventasEfectivo as number}`,
+        ventasConsideradas: VentasToQuery,
+        ventasEfectivo,
+        ultimoCorteDeCaja
+    }
+}
+
+// regrese el resumen de total to pay
+router.get("/calculo-de-corte", async ({query}, res) => {
+    console.log(query)
+    const calculo = await calculoDeCorte(query.terminal as string);
+    res.json(calculo)
+})
+
+router.route("/corte-de-caja")
+    .get(async ({query}, res) => {
+        const cortes = await CorteDeCaja.find(query);
+        res.json(cortes)
+    })
+    .post(async ({body}, res) => {
+        const newCorte = new CorteDeCaja();
+        const calculo  = await calculoDeCorte(body.terminal)
+        newCorte.ventasEfectivo = calculo.ventasEfectivo;
+        newCorte.saldoRealEfectivo = body.saldoRealEfectivo 
+        newCorte.saldoInicialEfectivo = calculo.ultimoCorteDeCaja ? calculo.ultimoCorteDeCaja.saldoFinalEfectivo as number : 0
+        newCorte.saldoEsperadoEfectivo = newCorte.saldoInicialEfectivo + newCorte.ventasEfectivo
+        newCorte.faltanteOSobrante = newCorte.saldoRealEfectivo - newCorte.saldoEsperadoEfectivo
+        newCorte.retiroOAbonoEfectivo = body.retiroOAbonoEfectivo
+        newCorte.saldoFinalEfectivo = newCorte.saldoRealEfectivo + body.retiroOAbonoEfectivo
+        newCorte.ordenesEfectivo = calculo.ventasConsideradas
+        newCorte.user = body.user;
+        newCorte.terminal = body.terminal;
+        await newCorte.save();
+        console.log(newCorte)
+        res.json({
+            message: messages.post,
+            newCorte
+        })
+    })
+    .put(async ({query}, res) => {
+
+    });
+
 export default router;

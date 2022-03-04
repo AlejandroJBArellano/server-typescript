@@ -1,31 +1,51 @@
 import {Schema, model, Document } from "mongoose";
-import OrderSchema, { Order } from "./Order";
-import UserSchema, { User } from "./User";
+import { Order } from "./Order";
+import { User } from "./User";
 
 const CorteDeCajaSchema = new Schema({
-    OrdenesEfectivo: [OrderSchema],
-    SaldoInicialEfectivo: Number,
-    VentasEfectivo: Number,
-    SaldoEsperadoEfectivo: Number,
-    SaldoRealEfectivo: Number,
-    RetiroOAbonoEfectivo: Number,
-    SaldoFinalEfectivo: Number,
-    user: UserSchema,
-    Terminal: String
+    ordenesEfectivo: [
+        {
+            items: [{
+            name: String,
+            colorHex: String,
+            price: Number,
+            proveedor: String
+            }],
+            paymentType: String,
+            userPin: Number,
+            terminal: String
+        }
+    ],
+    saldoInicialEfectivo: Number,
+    ventasEfectivo: Number,
+    faltanteOSobrante: Number,
+    saldoEsperadoEfectivo: Number,
+    saldoRealEfectivo: Number,
+    retiroOAbonoEfectivo: Number,
+    saldoFinalEfectivo: Number,
+    user: {
+        pin: Number,
+        completeName: String,
+        profileName: String,
+    },
+    terminal: String
 }, {
-    versionKey: false
+    versionKey: false,
+    timestamps: true
 });
 
 export interface CorteDecaja extends Document {
-    OrdenesEfectivo: Order[];
-    SaldoInicialefectivo: Number;
-    VentasEfectivo: Number;
-    SaldoEsperadoEfectivo: Number;
-    SaldoRealEfectivo: Number;
-    RetiroOAbonoEfectivo: Number;
-    SaldoFinalEfectivo: Number;
+    ordenesEfectivo: Order[];
+    saldoInicialEfectivo: number;
+    ventasEfectivo: number;
+    saldoEsperadoEfectivo: number;
+    faltanteOSobrante: number;
+    saldoRealEfectivo: number;
+    retiroOAbonoEfectivo: number;
+    saldoFinalEfectivo: number;
     user: User;
-    Terminal:String;
+    terminal:String;
+    createdAt: string;
 }
 
 export default model<CorteDecaja>("CorteDeCaja", CorteDeCajaSchema)
