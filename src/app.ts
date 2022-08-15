@@ -180,7 +180,9 @@ router.route("/user")
 router.get("/user-pin", async ({query}, res) => {
     // TODO return all of the embeded object
     const user = await User.findOne(query);
+    console.log(query)
     const profile = await Profile.findOne({profileName: user.profileName})
+    console.log(user, profile)
     const menu = await Menu.findById(profile?.menuId)
     const userResponse = {
         ...user._doc,
@@ -201,7 +203,7 @@ router.route("/order")
         const newOrder = new Order(body);
         await newOrder.save();
         res.json({
-            message: messages.post(newOrder._id),
+            message: 'La orden ha sido completa satisfactoriamente',
             newOrder
         })
     })
