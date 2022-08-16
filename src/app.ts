@@ -13,7 +13,8 @@ const messages = {
     put: (message: string) => `El objeto ${message} ha sido modificado satisfactoriamente`,
     delete: (message: string) => `El objeto ${message} fue eliminado de la base de datos satisfactoriamente`,
     error: "Hubo un error",
-    foundNothing: "No hemos encontrado ningún objeto así"
+    foundNothing: "No hemos encontrado ningún objeto así",
+    foundNothingDoc: (schemaName: string) => `No hemos encontrado ningún ${schemaName} así`,
 }
 
 router.get("/", (req, res) => {
@@ -180,6 +181,10 @@ router.route("/user")
 router.get("/user-pin", async ({query}, res) => {
     // TODO return all of the embeded object
     const user = await User.findOne(query);
+    if (!user){
+        res.status(200).json({message: messages.foundNothingDoc("usuario")});
+        return;
+    }
     console.log(query)
     const profile = await Profile.findOne({profileName: user.profileName})
     console.log(user, profile)
