@@ -243,7 +243,7 @@ async function calculoDeCorte(terminal: string) {
         ventasEfectivo += totalToPay
     }
     return {
-        message: `El efectivo esperado es ${ultimoCorteDeCaja?.saldoRealEfectivo as number + ventasEfectivo as number}`,
+        message: `El efectivo esperado es ${(ultimoCorteDeCaja?.saldoRealEfectivo as number || 0) + ventasEfectivo as number}`,
         ventasConsideradas: VentasToQuery,
         ventasEfectivo,
         ultimoCorteDeCaja

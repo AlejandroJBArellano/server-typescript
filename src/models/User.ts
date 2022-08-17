@@ -1,5 +1,4 @@
 import {Schema, model, Document} from "mongoose";
-import { Profile } from "./Profile";
 
 const UserSchema = new Schema({
     pin: Number,
@@ -9,7 +8,7 @@ const UserSchema = new Schema({
     versionKey: false
 });
 
-export interface User extends Document{
+export interface User extends Document {
     pin: number;
     completeName: string;
     profileName: string;

@@ -1,5 +1,4 @@
 import {Schema, model, Document} from "mongoose";
-import { Menu } from "./Menu";
 
 const ProfileSchema = new Schema({
     profileName: String,
